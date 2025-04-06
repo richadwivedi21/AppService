@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3-Tier Python App</title>
+</head>
+<body>
+    <h1>Welcome to Yash;s Web App</h1>
+    <form id="userForm">
+        <input type="text" id="name" placeholder="Name" required>
+        <input type="email" id="email" placeholder="Email" required>
+        <button type="submit">Add User</button>
+    </form>
+
+    <h2>Users:</h2>
+    <ul id="userList"></ul>
+
+    <script>
+        // Fetch and display user data
+        fetch('/get_user_data')
+            .then(response => response.json())
+            .then(data => {
+                const userList = document.getElementById('userList');
+                data.forEach(user => {
+                    const li = document.createElement('li');
+                    li.textContent = `${user[1]} - ${user[2]}`;
+                    userList.appendChild(li);
+                });
+            });
+
+        // Handle form submission
+        document.getElementById('userForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+
+            fetch('/add_user_data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name, email })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                location.reload();
+            });
+        });
+    </script>
+</body>
+</html>
